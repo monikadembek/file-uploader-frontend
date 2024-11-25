@@ -1,0 +1,50 @@
+<div class="upload-container">
+  <h2 class="header">Upload image file</h2>
+  <input 
+    type="file" 
+    (change)="onFileSelected($event)"
+    accept="image/*"
+    #fileInput
+    style="display: none"
+  >
+  <div class="preview-section" *ngIf="previewUrl">
+    <img [src]="previewUrl" alt="Preview" class="preview-image">
+    <button 
+      class="remove-image-btn" 
+      (click)="clearPreview()">
+      ✕
+    </button>
+  </div>
+
+  <div class="upload-controls">
+    <button 
+      class="select-button" 
+      (click)="fileInput.click()">
+      {{ previewUrl ? 'Change Photo' : 'Select Photo' }}
+    </button>
+    <button 
+      class="upload-button" 
+      (click)="uploadImage()"
+      [disabled]="!previewUrl || uploading">
+      Upload Photo
+    </button>
+    <button class="cancel-button" (click)="cancelUpload()" 
+      [disabled]="!uploading">
+      Cancel upload
+    </button>
+  </div>
+
+  <div *ngIf="uploading" class="progress-section">
+    <p>Uploading file: {{fileName}}</p>
+    <app-progress-bar [progress]="uploadProgress"></app-progress-bar>
+  </div>
+
+  <div *ngIf="imageUrl" class="uploaded-image-section">
+    <h3>Uploaded Image:</h3>
+    <img [src]="imageUrl" alt="Uploaded Profile photo" class="uploaded-image">
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+</div>
