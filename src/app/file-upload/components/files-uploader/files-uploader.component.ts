@@ -3,11 +3,19 @@ import { finalize } from 'rxjs';
 import { FilesService } from '../../files.service';
 import { UploadProgress } from '../../models';
 import { ProgressBarComponent } from '../progress-bar.component';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogModule,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-files-uploader',
   standalone: true,
-  imports: [ProgressBarComponent],
+  imports: [ProgressBarComponent, MatButtonModule, MatDialogModule, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogTitle],
   templateUrl: './files-uploader.component.html',
   styleUrl: './files-uploader.component.scss'
 })
