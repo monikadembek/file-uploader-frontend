@@ -1,13 +1,13 @@
 .upload-container {
-  max-width: 400px;
   margin: 20px auto;
   padding: 20px;
   text-align: center;
+  color: #fff;
 }
 
 .header {
   margin: 20px 0 40px;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .preview-section {
@@ -49,31 +49,16 @@
   margin-bottom: 20px;
 }
 
-.select-button, .upload-button, .cancel-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.select-button {
-  background-color: #2196F3;
-  color: white;
-}
-
-.upload-button {
-  background-color: #4CAF50;
-  color: white;
+.btn {
+  width: fit-content;
 }
 
 .cancel-button {
   background-color: #f44336;
-  color: white;
-}
 
-.upload-button:disabled, .cancel-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+  &:disabled {
+    opacity: 0.6;
+  }
 }
 
 .uploaded-image-section {

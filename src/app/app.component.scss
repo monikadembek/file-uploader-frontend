@@ -1,3 +1,13 @@
-.header {
-    text-align: center;
+.header-container {
+  padding: 20px 40px;
+  background-color: #810081;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
+
+.header {
+  color: #fff;
+  font-size: 1.8rem;
+}
+

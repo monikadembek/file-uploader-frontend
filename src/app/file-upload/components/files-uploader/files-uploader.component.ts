@@ -1,17 +1,25 @@
 import { Component, ElementRef, computed, signal, viewChild } from '@angular/core';
 import { finalize } from 'rxjs';
-import { FilesService } from '../files.service';
-import { UploadProgress } from '../models';
-import { ProgressBarComponent } from '../components/progress-bar.component';
+import { FilesService } from '../../files.service';
+import { UploadProgress } from '../../models';
+import { ProgressBarComponent } from '../progress-bar.component';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogModule,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-files',
+  selector: 'app-files-uploader',
   standalone: true,
-  imports: [ProgressBarComponent],
-  templateUrl: './files.component.html',
-  styleUrl: './files.component.scss'
+  imports: [ProgressBarComponent, MatButtonModule, MatDialogModule, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogTitle],
+  templateUrl: './files-uploader.component.html',
+  styleUrl: './files-uploader.component.scss'
 })
-export class FilesComponent {
+export class FilesUploaderComponent {
   previewUrl = signal<string | null>(null);
   imageUrl = signal<string | null>(null);
   uploading = signal(false);
