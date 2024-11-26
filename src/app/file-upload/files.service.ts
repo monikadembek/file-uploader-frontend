@@ -1,20 +1,9 @@
 import { HttpClient, HttpEvent, HttpEventType, HttpContextToken, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
-
-export interface UploadResponse {
-  url: string;
-  imagePublicId: string;
-  message: string;
-}
-
-export interface UploadProgress {
-  progress: number;
-  response?: UploadResponse;
-}
+import { UploadResponse, UploadProgress } from './models';
 
 const ABORT_SIGNAL = new HttpContextToken<AbortSignal>(() => new AbortController().signal);
-
 
 @Injectable({
   providedIn: 'root'
