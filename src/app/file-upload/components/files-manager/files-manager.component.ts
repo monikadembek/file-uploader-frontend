@@ -1,6 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FilesService } from '../../files.service';
 import { Resource } from '../../models';
+import { UploadingStateService } from '../../uploading-state.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-files-manager',
@@ -14,9 +16,11 @@ export class FilesManagerComponent {
   errorMessage = signal('');
 
   filesService = inject(FilesService);
+  uploadingStateService = inject(UploadingStateService);
 
   constructor() {
     this.getFiles();
+    this.refreshFiles();
   }
 
   async getFiles() {
@@ -46,5 +50,15 @@ export class FilesManagerComponent {
       console.log('error: ', error);
       this.errorMessage.set('Deleting file was not possible');
     }
+  }
+
+  private refreshFiles() {
+    this.uploadingStateService.shouldRefreshFiles$
+      .pipe(takeUntilDestroyed())
+      .subscribe(shouldRefresh => {
+        if (shouldRefresh) {
+          this.getFiles();
+        }
+      })
   }
 }
