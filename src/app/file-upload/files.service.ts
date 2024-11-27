@@ -1,9 +1,10 @@
-import { HttpClient, HttpEvent, HttpEventType, HttpContextToken, HttpContext } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpEventType, HttpContextToken, HttpContext, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable, Subject, takeUntil } from 'rxjs';
-import { UploadResponse, UploadProgress } from './models';
+import { firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
+import { UploadResponse, UploadProgress, GetFilesResponse, Resource, DeleteResponse } from './models';
 
 const ABORT_SIGNAL = new HttpContextToken<AbortSignal>(() => new AbortController().signal);
+const ASSETS_FOLDER = 'profile-photos';
 
 @Injectable({
   providedIn: 'root'
@@ -62,7 +63,23 @@ export class FilesService {
     return { uploadProgress$, cancelUpload };
   }
 
-  getFiles(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/files`);
+  getFiles(): Promise<Resource[]> {
+    let params = new HttpParams();
+    params = params.set('assetFolder', ASSETS_FOLDER);
+    const files$: Observable<Resource[]> = this.http.get<GetFilesResponse>(`${this.baseUrl}/files/cloudinary-image`, {
+      params
+    }).pipe(
+      map((response: GetFilesResponse) => response.resources)
+    );
+    return firstValueFrom(files$);
+  }
+
+  deleteFile(fileId: string): Promise<DeleteResponse> {
+    let params = new HttpParams();
+    params = params.set('publicId', fileId);
+    const delete$ = this.http.delete<DeleteResponse>(`${this.baseUrl}/files/cloudinary-image`, {
+      params
+    });
+    return firstValueFrom(delete$);
   }
 }

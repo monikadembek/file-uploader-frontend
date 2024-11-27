@@ -1,0 +1,27 @@
+<div class="images">
+  <p>Currently availabe profile images</p>
+  @if(files().length > 0) {
+    <div class="images-container">
+      @for (file of files(); track file.public_id) {
+        <div class="image-container">
+          <img [src]="file.secure_url" alt="image profile photo" class="image">
+          <button 
+            class="remove-image-btn" 
+            (click)="deleteFile(file.public_id)">
+            ✕
+          </button>
+        </div>
+      }
+    </div>
+  }
+  @if (errorMessage()) {
+    <div class="error-message">
+      <p>{{errorMessage()}}</p>
+    </div>
+  }
+</div>
+
+
+
+
+

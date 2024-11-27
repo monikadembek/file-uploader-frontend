@@ -1,4 +1,4 @@
-import { Component, ElementRef, computed, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, computed, signal, viewChild, inject } from '@angular/core';
 import { finalize } from 'rxjs';
 import { FilesService } from '../../files.service';
 import { UploadProgress } from '../../models';
@@ -10,7 +10,9 @@ import {
   MatDialogContent,
   MatDialogModule,
   MatDialogTitle,
+  MatDialogRef,
 } from '@angular/material/dialog';
+import { UploadingStateService } from '../../uploading-state.service';
 
 @Component({
   selector: 'app-files-uploader',
@@ -31,12 +33,20 @@ export class FilesUploaderComponent {
   private selectedFile: File | null = null;
   private cancelUploadFn: (() => void) | null = null;
 
+  private fileUploaded = false;
+  readonly dialogRef = inject(MatDialogRef<FilesUploaderComponent>);
+
   uploadButtonDisabled = computed(() => !this.previewUrl() || this.uploading());
 
-  constructor(private filesService: FilesService) { }
+  constructor(
+    private filesService: FilesService, 
+    private uploadingStateService: UploadingStateService
+  ) { }
 
   onFileSelected(event: any) {
     this.errorMessage.set('');
+    this.imageUrl.set('');
+
     const file = event.target.files[0];
     console.log('file', file);
     if (file) {
@@ -49,7 +59,6 @@ export class FilesUploaderComponent {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.previewUrl.set(e.target.result);
-        console.log('file preview: ', this.previewUrl());
       }
       // get image preview url in base64 string format
       // readAsDataURL() - produces data as data:URL representing file's data as a base64 encoded string
@@ -92,6 +101,7 @@ export class FilesUploaderComponent {
              if (event.response) {
               this.imageUrl.set(event.response.url);
               this.clearPreview();
+              this.fileUploaded = true;
             }
           },
           error: (error) => {
@@ -113,4 +123,11 @@ export class FilesUploaderComponent {
     }
   }
 
+  onDialogClose() {
+    this.dialogRef.close(); 
+
+    if (this.fileUploaded) {
+      this.uploadingStateService.setFilesNeedRefresh();
+    }
+  }
 }
