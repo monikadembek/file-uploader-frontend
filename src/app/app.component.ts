@@ -3,11 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { FilesUploaderComponent } from './file-upload/components/files-uploader/files-uploader.component';
+import { LoadingComponent } from "./loading/loading.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatButtonModule],
+  imports: [RouterOutlet, MatButtonModule, LoadingComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
