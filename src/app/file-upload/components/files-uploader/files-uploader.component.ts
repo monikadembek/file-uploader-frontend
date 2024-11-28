@@ -6,18 +6,18 @@ import { ProgressBarComponent } from '../progress-bar.component';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialogActions,
-  MatDialogClose,
   MatDialogContent,
   MatDialogModule,
   MatDialogTitle,
   MatDialogRef,
 } from '@angular/material/dialog';
 import { UploadingStateService } from '../../uploading-state.service';
+import { ALLOWED_IMAGE_MIME_TYPES, MAX_FILE_SIZE } from '../../constants';
 
 @Component({
   selector: 'app-files-uploader',
   standalone: true,
-  imports: [ProgressBarComponent, MatButtonModule, MatDialogModule, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogTitle],
+  imports: [ProgressBarComponent, MatButtonModule, MatDialogModule, MatDialogContent, MatDialogActions, MatDialogTitle],
   templateUrl: './files-uploader.component.html',
   styleUrl: './files-uploader.component.scss'
 })
@@ -29,6 +29,7 @@ export class FilesUploaderComponent {
   errorMessage = signal('');
   fileName = signal('');
   fileInput = viewChild.required<ElementRef>('fileInput');
+  readonly allowedMimeTypes = ALLOWED_IMAGE_MIME_TYPES.join(',');
   
   private selectedFile: File | null = null;
   private cancelUploadFn: (() => void) | null = null;
@@ -49,7 +50,19 @@ export class FilesUploaderComponent {
 
     const file = event.target.files[0];
     console.log('file', file);
+
     if (file) {
+      if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.type)) {
+        this.errorMessage.set(`Invalid file type, only allowed image files with one of these extensions: 
+          ${ALLOWED_IMAGE_MIME_TYPES.join(', ')}`);
+        return;
+      }
+      
+      if (file?.size > MAX_FILE_SIZE) {
+        this.errorMessage.set(`File size is too big, allowed file size is ${MAX_FILE_SIZE / (1024 * 1024)}Mb`);
+        return;
+      }
+
       this.selectedFile = file;
       this.fileName.set(file.name);
 
