@@ -7,7 +7,7 @@
           <img [src]="file.secure_url" alt="image profile photo" class="image">
           <button 
             class="remove-image-btn" 
-            (click)="deleteFile(file.public_id)">
+            (click)="openDeleteConfirmationDialog(file.public_id)">
             ✕
           </button>
         </div>
