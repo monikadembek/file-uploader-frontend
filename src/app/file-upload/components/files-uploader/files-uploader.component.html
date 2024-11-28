@@ -4,7 +4,7 @@
     <input 
       type="file" 
       (change)="onFileSelected($event)"
-      accept="image/*"
+      [accept]="allowedMimeTypes"
       #fileInput
       style="display: none"
     >

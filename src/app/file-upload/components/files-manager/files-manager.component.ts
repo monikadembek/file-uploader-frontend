@@ -1,8 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { FilesService } from '../../files.service';
 import { Resource } from '../../models';
 import { UploadingStateService } from '../../uploading-state.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteConfirmationDialogComponent } from '../delete-confirmation-dialog/delete-confirmation-dialog.component';
 
 @Component({
   selector: 'app-files-manager',
@@ -15,15 +17,17 @@ export class FilesManagerComponent {
   files = signal<Resource[]>([]);
   errorMessage = signal('');
 
-  filesService = inject(FilesService);
-  uploadingStateService = inject(UploadingStateService);
+  readonly filesService = inject(FilesService);
+  readonly uploadingStateService = inject(UploadingStateService);
+  readonly dialog = inject(MatDialog);
+  readonly destroyRef = inject(DestroyRef);
 
   constructor() {
     this.getFiles();
     this.refreshFiles();
   }
 
-  async getFiles() {
+  async getFiles(): Promise<void> {
     try {
       const files = await this.filesService.getFiles();
       this.files.set(files);
@@ -33,10 +37,21 @@ export class FilesManagerComponent {
       console.log('error: ', error);
       this.errorMessage.set('Displaying files was not possible');
     }
-    
   }
 
-  async deleteFile(fileId: string) {
+  openDeleteConfirmationDialog(fileId: string): void {
+    const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent);
+    dialogRef.afterClosed()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(shouldDelete => {
+      if (shouldDelete) {
+        this.deleteFile(fileId);
+      }
+    })
+  }
+
+  async deleteFile(fileId: string): Promise<void> {
     try {
       const { message, publicId } = await this.filesService.deleteFile(fileId);
       console.log('delete response: ', message, publicId);
@@ -52,7 +67,7 @@ export class FilesManagerComponent {
     }
   }
 
-  private refreshFiles() {
+  private refreshFiles(): void {
     this.uploadingStateService.shouldRefreshFiles$
       .pipe(takeUntilDestroyed())
       .subscribe(shouldRefresh => {
