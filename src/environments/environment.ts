@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  apiUrl: 'https://file-uploader-nest-backend.vercel.app/api'
+  production: true,
+  apiUrl: 'https://file-uploader-nest-backend.vercel.app'
 };
