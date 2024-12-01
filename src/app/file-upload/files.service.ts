@@ -1,7 +1,8 @@
 import { HttpClient, HttpEvent, HttpEventType, HttpContextToken, HttpContext, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, map, Observable, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { UploadResponse, UploadProgress, GetFilesResponse, Resource, DeleteResponse } from './models';
+import { environment } from '../../environments/environment';
 
 const ABORT_SIGNAL = new HttpContextToken<AbortSignal>(() => new AbortController().signal);
 const ASSETS_FOLDER = 'profile-photos';
@@ -11,7 +12,7 @@ const ASSETS_FOLDER = 'profile-photos';
 })
 export class FilesService {
 
-  private baseUrl = 'http://localhost:3000';
+  private baseUrl = environment.apiUrl;
   private abortController: AbortController | null = null;
 
   constructor(private http: HttpClient) {}
@@ -69,6 +70,7 @@ export class FilesService {
     const files$: Observable<Resource[]> = this.http.get<GetFilesResponse>(`${this.baseUrl}/files/cloudinary-image`, {
       params
     }).pipe(
+      tap((data) => console.log(data)),
       map((response: GetFilesResponse) => response.resources)
     );
     return firstValueFrom(files$);
